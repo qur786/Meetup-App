@@ -25,6 +25,7 @@ export function getStaticProps() {
   return {
     props: {
       meetups: DUMMY_MEETUPS
-    }
+    },
+    revalidate: 10, // Number of seconds of cycle after which this page should be pre-rendered on server-side after deploying
   }
 }
