@@ -1,9 +1,16 @@
+import Head from "next/head";
 import { connectionToMeetup } from "../db/connnect-mongo";
 import MeetupList from "../components/meetups/MeetupList";
 
 export default function HomePage(props) {
   return (
-    <MeetupList meetups={props.meetups} />
+    <>
+      <Head>
+        <title>A Meetup App</title>
+        <meta name="description" content="A meetup app built with next.js" />
+      </Head>
+      <MeetupList meetups={props.meetups} />
+    </>
   );
 }
 

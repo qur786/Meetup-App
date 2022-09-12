@@ -1,16 +1,23 @@
 import { ObjectId } from "mongodb";
+import Head from "next/head";
 import { connectionToMeetup } from "../../db/connnect-mongo";
 import MeetupDetails from "../../components/meetups/MeetupDetails";
 
 export default function MeetupDetailsPage(props) {
     return (
-        <MeetupDetails
-            id={props.meetup.id}
-            title={props.meetup.title}
-            image={props.meetup.image}
-            description={props.meetup.description}
-            address={props.meetup.address}
-        />
+        <>
+            <Head>
+                <title>{props.meetup.title}</title>
+                <meta name="description" content={props.meetup.description} />
+            </Head>
+            <MeetupDetails
+                id={props.meetup.id}
+                title={props.meetup.title}
+                image={props.meetup.image}
+                description={props.meetup.description}
+                address={props.meetup.address}
+            />
+        </>
     )
 }
 
