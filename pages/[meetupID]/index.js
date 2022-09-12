@@ -1,3 +1,4 @@
+import { MongoClient, ObjectId } from "mongodb";
 import MeetupDetails from "../../components/meetups/MeetupDetails";
 
 export default function MeetupDetailsPage(props) {
@@ -12,34 +13,39 @@ export default function MeetupDetailsPage(props) {
     )
 }
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+    const uri = "mongodb+srv://m001-student:fFL0o1hKf7qHsfXp@sandbox.ukfkzxi.mongodb.net/meetups?retryWrites=true&w=majority";
+    const client = new MongoClient(uri);
+    await client.connect();
+    const collection = client.db().collection("meetup");
+    const meetups = await collection.find({}, { _id: 1 }).toArray();
+    await client.close();
     return {
-        paths: [
-            {
-                params: {
-                    meetupID: "1",
-                }
-            },
-            {
-                params: {
-                    meetupID: "2",
-                }
+        paths: meetups.map((meetup => ({
+            params: {
+                meetupID: meetup._id.toString()
             }
-        ],
+        }))),
         fallback: false
     }
 }
 
-export function getStaticProps(context) {
+export async function getStaticProps(context) {
     const meetupID = context.params.meetupID;
+    const uri = "mongodb+srv://m001-student:fFL0o1hKf7qHsfXp@sandbox.ukfkzxi.mongodb.net/meetups?retryWrites=true&w=majority";
+    const client = new MongoClient(uri);
+    await client.connect();
+    const collection = client.db().collection("meetup");
+    const { title, image, description, address, _id } = await collection.findOne({ _id: ObjectId(meetupID) });
+    await client.close();
     return {
         props: {
             meetup: {
-                id: meetupID,
-                title: "Youtube fan fest",
-                image: "https://lh3.googleusercontent.com/xEGG6LDaFxBbQiwjTyQRQl2GZNATSLve0H62FDgIP6BMBUZSCVMN2feB-LnhM9y53eo7ZS4EjGcW5WhV2JMWW7MJ3bAdafJDI7FkSw=s1200",
-                description: "Youtube fan fest",
-                address: "Mumbai, India"
+                id: _id.toString(),
+                title,
+                image,
+                description,
+                address,
             }
         }
     }
