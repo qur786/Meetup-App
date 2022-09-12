@@ -1,4 +1,5 @@
-import { MongoClient, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
+import { connectionToMeetup } from "../../db/connnect-mongo";
 import MeetupDetails from "../../components/meetups/MeetupDetails";
 
 export default function MeetupDetailsPage(props) {
@@ -14,10 +15,7 @@ export default function MeetupDetailsPage(props) {
 }
 
 export async function getStaticPaths() {
-    const uri = "mongodb+srv://m001-student:fFL0o1hKf7qHsfXp@sandbox.ukfkzxi.mongodb.net/meetups?retryWrites=true&w=majority";
-    const client = new MongoClient(uri);
-    await client.connect();
-    const collection = client.db().collection("meetup");
+    const { collection, client } = await connectionToMeetup();
     const meetups = await collection.find({}, { _id: 1 }).toArray();
     await client.close();
     return {
@@ -32,10 +30,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context) {
     const meetupID = context.params.meetupID;
-    const uri = "mongodb+srv://m001-student:fFL0o1hKf7qHsfXp@sandbox.ukfkzxi.mongodb.net/meetups?retryWrites=true&w=majority";
-    const client = new MongoClient(uri);
-    await client.connect();
-    const collection = client.db().collection("meetup");
+    const { collection, client } = await connectionToMeetup();
     const { title, image, description, address, _id } = await collection.findOne({ _id: ObjectId(meetupID) });
     await client.close();
     return {

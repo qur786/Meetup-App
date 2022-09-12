@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { connectionToMeetup } from "../db/connnect-mongo";
 import MeetupList from "../components/meetups/MeetupList";
 
 export default function HomePage(props) {
@@ -8,10 +8,7 @@ export default function HomePage(props) {
 }
 
 export async function getStaticProps() {
-  const uri = "mongodb+srv://m001-student:fFL0o1hKf7qHsfXp@sandbox.ukfkzxi.mongodb.net/meetups?retryWrites=true&w=majority";
-  const client = new MongoClient(uri);
-  await client.connect();
-  const collection = client.db().collection("meetup");
+  const { collection, client } = await connectionToMeetup();
   const meetups = await collection.find().toArray();
   await client.close();
   return {
